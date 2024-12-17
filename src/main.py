@@ -38,9 +38,8 @@ def main():
     print(regex_list)
     '''
 
-    links_node = TextNode("This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev), fucker", TextType.TEXT)
-    nodes_list = split_nodes_links([links_node])
-    print(nodes_list)
+    node_list = text_to_textnodes("This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)")
+    print(node_list)
     
 
 main()
