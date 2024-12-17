@@ -2,7 +2,9 @@ import unittest
 from inline_markdown import (
     split_nodes_delimiter, 
     extract_markdown_links,
-    extract_markdown_images
+    extract_markdown_images,
+    split_nodes_images,
+    split_nodes_links
 )
 
 from textnode import TextNode, TextType
@@ -115,6 +117,112 @@ class TestInlineMarkdown(unittest.TestCase):
         self.assertListEqual(
             [("pretty image", "src/img/pretty_image.jpg")],
             extract_markdown_images(pic)
+        )
+
+    def test_delim_link(self):
+        node = TextNode("This is text with an [example link](https://www.example.com).", TextType.TEXT)
+        new_nodes = split_nodes_links([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.TEXT),
+                TextNode("example link", TextType.LINK, "https://www.example.com"),
+                TextNode(".", TextType.TEXT),
+            ],
+            new_nodes,
+        )
+
+    def test_delim_image(self):
+        node = TextNode("I'm a ![pretty image](src/img/pretty_image.jpg)!", TextType.TEXT)
+        new_nodes = split_nodes_images([node])
+        self.assertListEqual(
+            [
+                TextNode("I'm a ", TextType.TEXT),
+                TextNode("pretty image", TextType.IMAGE, "src/img/pretty_image.jpg"),
+                TextNode("!", TextType.TEXT)
+            ],
+            new_nodes,
+        )
+
+    def test_delim_no_image(self):
+        node = TextNode("I'm not an image", TextType.TEXT)
+        new_nodes = split_nodes_images([node])
+        self.assertListEqual([node], new_nodes)
+
+    def test_delim_no_link(self):
+        node = TextNode("I'm not a link", TextType.TEXT)
+        new_nodes = split_nodes_images([node])
+        self.assertListEqual([node], new_nodes)
+
+    def test_delim_multi_link(self):
+        node = TextNode("This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)", TextType.TEXT)
+        new_nodes = split_nodes_links([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with a link ", TextType.TEXT),
+                TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"),
+            ],
+            new_nodes,
+        )
+
+    def test_delim_multi_image(self):
+        node = TextNode("This is text with ![picture one](src/images/picture_one.jpg) and ![picture two](src/images/picture_two.gif)", TextType.TEXT)
+        new_nodes = split_nodes_images([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with ", TextType.TEXT),
+                TextNode("picture one", TextType.IMAGE, "src/images/picture_one.jpg"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("picture two", TextType.IMAGE, "src/images/picture_two.gif"),
+            ],
+            new_nodes,
+        )
+
+    def test_delim_link_and_image(self):
+        node = TextNode("This is text with [a link](http://www.blep.com) and ![an image](src/img/test_image.pic)", TextType.TEXT)
+        new_nodes = split_nodes_links([node])
+        new_nodes = split_nodes_images(new_nodes)
+        self.assertListEqual(
+            [
+                TextNode("This is text with ", TextType.TEXT),
+                TextNode("a link", TextType.LINK, "http://www.blep.com"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("an image", TextType.IMAGE, "src/img/test_image.pic"),
+            ],
+            new_nodes,
+        )
+    
+    def test_invalid_link_syntax(self):
+        node = TextNode("Imma [broken link(nada.zilch)", TextType.TEXT)
+        new_nodes = split_nodes_links([node])
+        self.assertListEqual([node], new_nodes)
+
+    def test_invalid_image_syntax(self):
+        node =  TextNode("Imma ![broken pic(nada.zilch)", TextType.TEXT)
+        new_nodes = split_nodes_images([node])
+        self.assertListEqual([node], new_nodes)
+
+    def test_link_at_start(self):
+        node = TextNode("[Start](https://www.google.com) here", TextType.TEXT)
+        new_nodes = split_nodes_links([node])
+        self.assertListEqual(
+            [
+                TextNode("Start", TextType.LINK, "https://www.google.com"),
+                TextNode(" here", TextType.TEXT),
+            ],
+            new_nodes,
+        )
+
+    def test_image_at_start(self):
+        node = TextNode("![BAM!](src/images/BAM.gif) haha", TextType.TEXT)
+        new_nodes = split_nodes_images([node])
+        self.assertListEqual(
+            [
+                TextNode("BAM!", TextType.IMAGE, "src/images/BAM.gif"),
+                TextNode(" haha", TextType.TEXT),
+            ],
+            new_nodes,
         )
 
 if __name__ == "__main__":

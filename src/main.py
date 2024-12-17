@@ -1,6 +1,6 @@
 from textnode import *
 from htmlnode import *
-from inline_markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
+from inline_markdown import *
 
 def main():
     '''
@@ -32,13 +32,15 @@ def main():
     )
     print(dummy_htmlnode.to_html())
     '''
+    '''
     text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
     regex_list = extract_markdown_links(text)
     print(regex_list)
+    '''
 
-    invalid_link = "This [link](nada) is invalid"
-    invalid_list = extract_markdown_links(invalid_link)
-    print(invalid_list)
-
+    links_node = TextNode("This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev), fucker", TextType.TEXT)
+    nodes_list = split_nodes_links([links_node])
+    print(nodes_list)
+    
 
 main()
