@@ -1,45 +1,18 @@
 from textnode import *
 from htmlnode import *
 from inline_markdown import *
+from markdown_blocks import markdown_to_blocks
 
 def main():
-    '''
-    dummy_textnode = TextNode("This is a TextNode", TextType.LINK, "https://www.example.com")
-    dummy_leafnode = text_node_to_html_node(dummy_textnode)
-
-    image_textnode = TextNode("This should be an image", TextType.IMAGE, "/src/img/test.jpg")
-    image_leafnode = text_node_to_html_node(image_textnode)
     
-    print(dummy_leafnode.to_html())
-    print(image_leafnode.to_html())
+    doc = """# This is a heading
 
-    split_node = TextNode("I **AM** THE **MAN**", TextType.TEXT)
-    print(split_node)
-    new_nodes = split_nodes_delimiter([split_node], "**", TextType.BOLD)
-    print(new_nodes)
-    '''
-    
+This is a paragraph of text. It has some **bold** and *italic* words inside of it.
 
-    '''
-    dummy_htmlnode = ParentNode(
-        "a", 
-         [
-            LeafNode("b", "Bold text"),
-            LeafNode(None, "Normal text"),
-            LeafNode("i", "italic text"),
-            LeafNode(None, "Normal text"),
-        ]
-    )
-    print(dummy_htmlnode.to_html())
-    '''
-    '''
-    text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
-    regex_list = extract_markdown_links(text)
-    print(regex_list)
-    '''
-
-    node_list = text_to_textnodes("This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)")
-    print(node_list)
-    
+* This is the first list item in a list block
+* This is a list item
+* This is another list item"""
+    block_list = markdown_to_blocks(doc)
+    print(block_list)
 
 main()
