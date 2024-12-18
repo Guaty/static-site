@@ -3,9 +3,8 @@ import shutil
 
 
 def copy_dir(source, dest):
-    if os.path.exists(dest):
-        shutil.rmtree(dest)
-    os.mkdir(dest)
+    if not os.path.exists(dest):
+        os.mkdir(dest)
     list_dir = os.listdir(source)
 
     for item in list_dir:
