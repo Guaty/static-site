@@ -193,5 +193,28 @@ this is paragraph text
             "<div><blockquote>This is a blockquote block</blockquote><p>this is paragraph text</p></div>",
         )
 
+    def test_extract_title(self):
+        md = """
+# this is an h1
+
+this is paragraph text
+
+## this is an h2
+"""
+        self.assertEqual("this is an h1", extract_title(md))
+
+    def test_extract_tile_error(self):
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with *italic* text and `code` here
+This is the same paragraph on a new line
+
+* This is a list
+* with items
+"""
+        with self.assertRaises(Exception):
+            extract_title(md)
+
 if __name__ == "__main__":
     unittest.main()

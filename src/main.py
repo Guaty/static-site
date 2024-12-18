@@ -1,11 +1,13 @@
-from textnode import *
-from htmlnode import *
-from inline_markdown import *
-from markdown_blocks import markdown_to_blocks, block_to_block_type
+import os
+import shutil
 
+from copystatic import copy_dir
+
+
+path_static = "./static"
+path_public = "./public"
 
 def main():
-    markdown = "blah for now"
-    print(markdown)
+    copy_dir(path_static, path_public)
 
 main()

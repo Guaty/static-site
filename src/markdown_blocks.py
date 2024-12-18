@@ -3,6 +3,18 @@ from htmlnode import ParentNode
 from inline_markdown import text_to_textnodes
 
 
+def extract_title(markdown):
+    title = ""
+    first_block = markdown_to_blocks(markdown)[0]
+    lines = first_block.split("\n")
+    for line in lines:
+        if line.startswith("# "):
+            title += line.lstrip("#").strip()
+    if len(title) == 0:
+        raise Exception("No title found")
+    return title
+
+
 def markdown_to_blocks(markdown):
     blocks = markdown.split("\n\n")
     filtered_blocks = []
